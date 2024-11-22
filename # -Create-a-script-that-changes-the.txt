@@ -1,0 +1,42 @@
+# -Create-a-script-that-changes-the-permissions-of-multiple-files-in-a-directory-based-on-user-input.
+
+
+#!/bin/bash
+
+# Ask for the directory
+echo "Enter the directory path:"
+read dir
+
+# Check if the directory exists
+if [ ! -d "$dir" ]; then
+  echo "Directory does not exist. Exiting."
+  exit 1
+fi
+
+# Ask for the file permission type (e.g., rwxr-xr-x)
+echo "Enter the permission to set (e.g., 755, 644):"
+read permission
+
+# Validate the permission format (should be a 3-digit octal number)
+if ! [[ "$permission" =~ ^[0-7]{3}$ ]]; then
+  echo "Invalid permission format. Please enter a 3-digit octal value (e.g., 755, 644)."
+  exit 1
+fi
+
+# Ask if user wants to change permissions for files or directories
+echo "Do you want to change permissions for files or directories? (f/d)"
+read choice
+
+# Apply permissions based on user's choice
+if [ "$choice" == "f" ]; then
+  # Change permissions for files only
+  find "$dir" -type f -exec chmod "$permission" {} \;
+  echo "Permissions set to $permission for all files in $dir."
+elif [ "$choice" == "d" ]; then
+  # Change permissions for directories only
+  find "$dir" -type d -exec chmod "$permission" {} \;
+  echo "Permissions set to $permission for all directories in $dir."
+else
+  echo "Invalid choice. Exiting."
+  exit 1
+fi
